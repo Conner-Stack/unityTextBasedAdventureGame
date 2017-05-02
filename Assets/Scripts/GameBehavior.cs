@@ -5,10 +5,12 @@ public class GameBehavior : MonoBehaviour {
     //serializes everything below it for use in Unity
     [SerializeField]
     //will hold all the GameObjects in a 2D list
-    List<GameObject>[,] grid;
+    List<List<GameObject>> gridRows = new List<List<GameObject>>();
+    //this will be the sublist at the z coordinate that will go into the nested list gridRows
+    List<GameObject> gridColumns = new List<GameObject>();
     //a public GameObject class that will contain the prefab of my cube
     //will be stored in the list on each instantiation
-    public GameObject boxPrefab;
+    public GameObject planePrefab;
     //an integer for the width, or "rows" of the grid. (x dimension)
     private int width = 10;
     //an integer for the height, or "columns" of the grid (y dimension)
@@ -31,26 +33,25 @@ public class GameBehavior : MonoBehaviour {
                 //per iteration of x, not sure how to make this happen with a list
                 //also, I haven't found an example of this line, not sure if
                 //I should add <gameObject> right after instantiate
-                GameObject boxClone = Instantiate(boxPrefab);
+                GameObject planeInstance = Instantiate(planePrefab);
                 //what this does is take every instantiation of the boxClone gameObject
                 //one at a time and sets their position relative to the parent object
                 //which should evenly space them out in width and depth
-                boxClone.transform.position = new Vector3(boxClone.transform.position.x + x,
-                                                           boxClone.transform.position.y,
-                                                           boxClone.transform.position.z + z);
-                //at the end of the iteration, takes the value of x and z and uses that spot in
-                //our list to put that specific instantiation of the grid in it
-                
-                grid[x, z].Add(boxClone);
-                
+                planeInstance.transform.position = new Vector3(planeInstance.transform.position.x + x,
+                                                           planeInstance.transform.position.y,
+                                                           planeInstance.transform.position.z + z);
+                //places a game object in the gridColumns sublist on each iteration
+                gridColumns.Add(planeInstance);
             }
-           
+            //upon exiting the subloop, add's each completely iterated sublist of gridColumns into the gridRows list
+            gridRows.Add(gridColumns);
         }
     }
     // Use this for initialization
     void Start () {
         //should create the grid upon start of the application
         CreateGrid();
+        //but it doesn't
     }
     // Update is called once per frame
     void Update()
